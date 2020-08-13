@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/index.css">
+    <link rel="mainfest" href="./mainfest.json">
+</head>
+
+<body>
+    <div>
+        <h3>漫画图片</h3>
+        <ul id="content">
+
+        </ul>
+    </div>
+    <script src="./main.js"></script>
+    <script>
+        // 需要加载serviceWorker
+        window.addEventListener("load", (e) => {
+            // 解决离线缓存的问题
+            // 判断是否支持serviceWorker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log(registration)
+                    })
+                    .catch();
+            }
+        })
+    </script>
+</body>
+
+</html>
