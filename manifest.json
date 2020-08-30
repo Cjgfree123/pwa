@@ -5,8 +5,8 @@
     "start_url": "/index.html",
     "icons": [
         {
-            "src": "",
-            "sizes": "144*144",
+            "src": "/icon.png",
+            "sizes": "144x144",
             "type": "image/png"
         }
     ],
