@@ -8,10 +8,45 @@ const CACHE_LIST = [
     "/api/img"
 ];
 
+// 获取数据后，进行缓存
+function fetchAddSave(request){
+    // 如果请求到了，需要更新缓存
+    return fetch(request).then(data => {
+        // 用当前服务器返回的响应, 更新缓存
+
+        // 此处res必须克隆, 因为使用一次就会销毁
+        let r = res.clone();
+        caches.open(CACHE_NAME).then(cache => {
+            cache.put(request, r);
+        })
+        return res;
+    })
+}
+
 // self等效于this
 // 只要拦截到了客户请求，将会来执行fetch方法
+// 线程中不能发ajax -> fetch  fetch api
 self.addEventListener("fetch", (e) => {
     console.log(e.request.url);
+
+    // 缓存策略: 从缓存取，用网络数据更新缓存
+    if(e.request.url.includes("/api/")){
+        // 如果请求的是接口
+        return e.respondWith(
+            fetchAddSave(e.request).catch(err => {
+                // 打开缓存, 把缓存中匹配到的结果，返回回去
+                return caches.open(CACHE_NAME).then(cache => cache.match(e.request))
+            })
+        );
+    }
+
+    // 如果联网的话就发请求
+    e.respondWith( // 用什么内容,返回当前响应
+        fetch(e.request).catch(err => {
+            // 打开缓存, 把缓存中匹配到的结果，返回回去
+            return caches.open(CACHE_NAME).then(cache => cache.match(e.request))
+        })
+    )
 })
 
 /**
